@@ -112,10 +112,9 @@ static $imagesEncoded = array(
 
 $verno = "2.3";
 
-// Real men's scripts don't give any warnings, so it's safe to do this =)
+// report all errors
+error_reporting(E_ALL);
 
-// report all errors (strict is for php5)
-ini_set('error_reporting', E_ALL | E_STRICT);
 // display all errors
 ini_set('display_errors', TRUE);
 // don't log errors to server log
@@ -347,7 +346,7 @@ function getFileSize($filename)
  */
 function getFileModtime($file)
 {
-  return date("d.m.Y", filemtime($file));
+  return date("Y-m-d", filemtime($file));
 }
 
 /**
@@ -486,6 +485,7 @@ $dircontent = array_filter($dircontent, "filterFilelist");
         background: #000000;
         margin: 3ex;
         color: #FFFFFF;
+        font-size: medium;
         font-family: "Courier", monospace;
       }
 
@@ -493,24 +493,17 @@ $dircontent = array_filter($dircontent, "filterFilelist");
       a:active,
       a:visited {
         background: none;
-        color: #FFFFFF;
+        color: white;
         text-decoration: none;
       }
 
-      /*
-      a:visited {
-        color: #404040;
-        background: none;
-        text-decoration: none;
-      }
-*/
-
-      a:hover {
+      a:hover,
+      tr:hover {
         background-color: #808080;
       }
 
       h1 {
-        font-size: 3ex;
+        font-size: larger;
       }
 
       /* Index header */
@@ -519,23 +512,10 @@ $dircontent = array_filter($dircontent, "filterFilelist");
         background: #404040;
       }
 
-      /* hilight rows */
-      tr.mouseover {
-        background: #808080;
-      }
-
-      tr.mouseout {
-        background: none;
-      }
-
       /* copyright text at the bottom of the page */
       .copy {
         font-size: 8pt;
       }
-
-      td.icon {}
-
-      td.file {}
 
       td.thumbnail img {
         border: 0;
@@ -552,12 +532,9 @@ $dircontent = array_filter($dircontent, "filterFilelist");
       }
 
       div.thumbnail {
-        float: left;
         display: inline;
         background: #222;
         text-align: center;
-        width: 100px;
-        height: 150px;
       }
     </style>
   <?php
@@ -570,7 +547,7 @@ $dircontent = array_filter($dircontent, "filterFilelist");
   <?php
   // if no header is specified, display the directory name
   if (!@include("./header.html")) {
-    echo "<h1>Index of " . htmlentities(dirname($_SERVER["PHP_SELF"])) . "</h1>\n";
+    echo "<header><h1>Index of " . htmlentities(dirname($_SERVER["PHP_SELF"])) . "</h1></header>";
   }
 
   // Mode selection	
@@ -586,7 +563,7 @@ $dircontent = array_filter($dircontent, "filterFilelist");
       echo "</tr>\n";
 
       foreach ($dircontent as $file) {
-        echo '<tr class="fileitem" onmouseover="this.className=\'mouseover\'" onmouseout="this.className=\'mouseout\'">';
+        echo '<tr class="fileitem">';
         // directories
         if (is_dir($file) and $show_dirs) {
           echo '<td><img src="' . getIcon('folder') . '" alt="[DIR]" /></td><td class="icon"><a href="' . $file . '/">' . $file . '</a></td>';
@@ -681,18 +658,14 @@ $dircontent = array_filter($dircontent, "filterFilelist");
       }
       break;
   }
-
-  ?>
-
-  <?php
   @include("./footer.html");
   ?>
 
-  <p class="copy"><a href="http://tefra.fi/software/php/">PHP Indexer <?php echo $verno; ?></a> by <a href="mailto:shrike@addiktit.net">Shrike</a></p>
+  <footer>
+    <p class="copy"><a href="https://github.com/lepinkainen/indexer">PHP Indexer <?php echo $verno; ?></a></p>
+  </footer>
 
-  <?php
-  @include("./bottomfooter.html");
-  ?>
+  <?php @include("./bottomfooter.html"); ?>
 
 </body>
 
