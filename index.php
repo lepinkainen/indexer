@@ -77,12 +77,12 @@ $mode = 'normal';         // options: 'normal' & 'thumbnails'
 $thumbdir = '/tmp/thumbnails/';
 
 // put any additional extensions in here
-static $fileTypes = Array(
-  "html"     => Array("html","htm"),
-  "image"    => Array("gif","jpg","jpeg","png","tif","tiff","bmp","art"),
-  "text"     => Array("asp","c","cfg","cpp","css","csv","conf","cue","diz","h","inf","ini","java","js","log","nfo","php","phps","pl","rdf","rss","rtf","sql","txt","vbs","xml"),
-  "binary"   => Array("asf","au","avi","bin","class","divx","doc","exe","mov","mpg","mpeg","mp3","ogg","ogm","pdf","ppt","ps","rm","swf","wmf","wmv","xls"),
-  "archive"  => Array("ace","arc","bz2","cab","gz","lha","jar","rar","sit","tar","tbz2","tgz","z","zip","zoo")
+static $fileTypes = array(
+  "html"     => array("html", "htm"),
+  "image"    => array("gif", "jpg", "jpeg", "png", "tif", "tiff", "bmp", "art"),
+  "text"     => array("asp", "c", "cfg", "cpp", "css", "csv", "conf", "cue", "diz", "h", "inf", "ini", "java", "js", "log", "nfo", "php", "phps", "pl", "rdf", "rss", "rtf", "sql", "txt", "vbs", "xml"),
+  "binary"   => array("asf", "au", "avi", "bin", "class", "divx", "doc", "exe", "mov", "mpg", "mpeg", "mp3", "ogg", "ogm", "pdf", "ppt", "ps", "rm", "swf", "wmf", "wmv", "xls"),
+  "archive"  => array("ace", "arc", "bz2", "cab", "gz", "lha", "jar", "rar", "sit", "tar", "tbz2", "tgz", "z", "zip", "zoo")
 );
 
 // this oneliner can be used to generate new images when needed:
@@ -92,7 +92,7 @@ static $fileTypes = Array(
 // NOTE: Only GIF-images are supported at the moment!
 
 // thumbnail images encoded in base64
-static $imagesEncoded = Array(
+static $imagesEncoded = array(
   "archive"   => "R0lGODlhEAAQAJECAAAAAP///////wAAACH5BAEAAAIALAAAAAAQABAAAAI3lA+pxxgfUhNKPRAbhimu2kXiRUGeFwIlN47qdlnuarokbG46nV937UO9gDMHsMLAcSYU0GJSAAA7",
   "asc"       => "R0lGODlhBQADAIABAN3d3f///yH5BAEAAAEALAAAAAAFAAMAAAIFTGAHuF0AOw==",
   "binary"    => "R0lGODlhEAAQAJECAAAAAP///////wAAACH5BAEAAAIALAAAAAAQABAAAAI0lICZxgYBY0DNyfhAfROrxoVQBo5mpzFih5bsFLoX5iLYWK6xyur5ubPAbhPZrKhSKCmCAgA7",
@@ -105,7 +105,7 @@ static $imagesEncoded = Array(
   "blank"     => "R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
   "unknown"   => "R0lGODlhEAAQAJECAAAAAP///////wAAACH5BAEAAAIALAAAAAAQABAAAAI1lICZxgYBY0DNyfhAfXcuxnkI1nCjB2lgappld6qWdE4vFtprR+4sffv1ZjwdkSc7KJYUQQEAOw==",
   "bigfolder" => "R0lGODlhIAAgAMQAAP///wAAACkxKWNjY5ycpb29vc7Ozt7e3v//7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAgACAAxP///wAAACkxKWNjY5ycpb29vc7Ozt7e3v//7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAXzICAGpGieaKoGROsShRsMdF0H6ggXhdEbhkPwcEAUEQjCYIbLoUi0FnKKVDIFKVZrObs1SU2nSQvb9X7B4cFKC5+6rTSxeKQml0uxHgAdbK8CgYF8fW1ueysvLlw2jSVOZC0xPD1WTF1tOSyTPD5AckRGa3iHI51oQnNGdmylb3AEq3ZTrYhPsLSkgoO2WUxLglmGvWIsjF7ET4rHhsh6kcuFjsWKZZ3SNq46LpxnQJbMrlrdnkCpoQa1WeSoarLqT5TloHRU8G+Sn+f1rKSasKrq9GOyp08Lgfb89TIYKyEgLMQY3nkYLFkhihCTvSKRUUQIADs=",
-  );
+);
 //--------------------------------------------------
 // ...Configuration
 //--------------------------------------------------
@@ -133,39 +133,37 @@ ini_set('warn_plus_overloading', TRUE);
 /**
  * generate images on the fly when requested (base64 decode)
  */
-if (isset($_GET["getimage"]) and $_GET["getimage"] != "") 
-{
+if (isset($_GET["getimage"]) and $_GET["getimage"] != "") {
   global $imagesEncoded;
-  
+
   $imageDataEnc = $imagesEncoded[$_GET["getimage"]];
   if ($imageDataEnc) {
     $maxAge = 31536000; // one year
-    doConditionalGet($_GET["getimage"], gmmktime(1,0,0,1,1,2004));
+    doConditionalGet($_GET["getimage"], gmmktime(1, 0, 0, 1, 1, 2004));
     $imageDataRaw = base64_decode($imageDataEnc);
     Header("Content-Type: image/gif");
-    Header("Content-Length: ".strlen($imageDataRaw));
+    Header("Content-Length: " . strlen($imageDataRaw));
     Header("Cache-Control: public, max-age=$maxAge, must-revalidate");
-    Header("Expires: ".createHTTPDate(time()+$maxAge));
+    Header("Expires: " . createHTTPDate(time() + $maxAge));
     echo $imageDataRaw;
   }
-  
+
   die();
 }
 
 /**
  * Passthru thumbnails from thumb directory
  */
-if (isset($_GET["getthumb"]) and $_GET["getthumb"] != "")
-{
+if (isset($_GET["getthumb"]) and $_GET["getthumb"] != "") {
   // thumbnail file
-  $thumbfile = $thumbdir.$_GET["getthumb"].".jpg";
-  
+  $thumbfile = $thumbdir . $_GET["getthumb"] . ".jpg";
+
   $maxAge = 31536000; // one year
-  doConditionalGet($_GET["getthumb"], gmmktime(1,0,0,1,1,2004));
+  doConditionalGet($_GET["getthumb"], gmmktime(1, 0, 0, 1, 1, 2004));
   Header("Content-Type: image/jpeg");
-  Header("Content-Length: ".filesize($thumbfile));
+  Header("Content-Length: " . filesize($thumbfile));
   Header("Cache-Control: public, max-age=$maxAge, must-revalidate");
-  Header("Expires: ".createHTTPDate(time()+$maxAge));
+  Header("Expires: " . createHTTPDate(time() + $maxAge));
   fpassthru(fopen($thumbfile, 'rb'));
 
   die();
@@ -176,15 +174,16 @@ if (isset($_GET["getthumb"]) and $_GET["getthumb"] != "")
  *
  * Returns URL to thumbnail, fails silently if source is corrupted
  */
-function createThumb($src,$maxWidth=100,$maxHeight=100,$quality=100) {
+function createThumb($src, $maxWidth = 100, $maxHeight = 100, $quality = 100)
+{
   global $thumbdir;
 
   // thumb dir has to exist, return default image otherwise
-  if(!file_exists($thumbdir) or !is_writable($thumbdir)) return getIcon('image');
+  if (!file_exists($thumbdir) or !is_writable($thumbdir)) return getIcon('image');
 
   // if picture md5sum is in cache, use it, else calculate it
   $md5cache = getMD5Sums();
-  if(array_key_exists($src, $md5cache)) {
+  if (array_key_exists($src, $md5cache)) {
     $thumbname = $md5cache[$src];
   } else {
     $thumbname = md5_file($src);
@@ -192,11 +191,11 @@ function createThumb($src,$maxWidth=100,$maxHeight=100,$quality=100) {
     cacheMD5($src, $thumbname);
   }
 
-  $dest = $thumbdir.$thumbname.".jpg";
+  $dest = $thumbdir . $thumbname . ".jpg";
 
   // no need to create thumbs twice
-  if(file_exists($dest)) return getThumbnail($thumbname);
-  
+  if (file_exists($dest)) return getThumbnail($thumbname);
+
   // path info
   $destInfo  = pathInfo($dest);
 
@@ -204,57 +203,52 @@ function createThumb($src,$maxWidth=100,$maxHeight=100,$quality=100) {
   $srcSize   = getImageSize($src);
 
   // image dest size $destSize[0] = width, $destSize[1] = height
-  $srcRatio  = $srcSize[0]/$srcSize[1]; // width/height ratio
-  $destRatio = $maxWidth/$maxHeight;
-  if ($destRatio > $srcRatio) 
-    {
-      $destSize[1] = $maxHeight;
-      $destSize[0] = $maxHeight*$srcRatio;
-    }
-  else 
-    {
-      $destSize[0] = $maxWidth;
-      $destSize[1] = $maxWidth/$srcRatio;
-    }
-  
+  $srcRatio  = $srcSize[0] / $srcSize[1]; // width/height ratio
+  $destRatio = $maxWidth / $maxHeight;
+  if ($destRatio > $srcRatio) {
+    $destSize[1] = $maxHeight;
+    $destSize[0] = $maxHeight * $srcRatio;
+  } else {
+    $destSize[0] = $maxWidth;
+    $destSize[1] = $maxWidth / $srcRatio;
+  }
+
   // true color image
-  $destImage = imageCreateTrueColor($destSize[0],$destSize[1]);
-  
+  $destImage = imageCreateTrueColor($destSize[0], $destSize[1]);
+
   // antialiasing requres GD2
-  if(function_exists('imageAntiAlias')) imageAntiAlias($destImage,true);
+  if (function_exists('imageAntiAlias')) imageAntiAlias($destImage, true);
 
   // src image
-  switch ($srcSize[2]) 
-    {
+  switch ($srcSize[2]) {
     case 1: //GIF
       $srcImage = @imageCreateFromGif($src);
       break;
-      
+
     case 2: //JPEG
       $srcImage = @imageCreateFromJpeg($src);
       break;
-      
+
     case 3: //PNG
       $srcImage = @imageCreateFromPng($src);
       break;
-      
+
     default:
       return "Unknown image type";
       break;
-    }
-  
+  }
+
   // resampling
-  @imageCopyResampled($destImage, $srcImage, 0, 0, 0, 0,$destSize[0],$destSize[1],$srcSize[0],$srcSize[1]);
-  
+  @imageCopyResampled($destImage, $srcImage, 0, 0, 0, 0, $destSize[0], $destSize[1], $srcSize[0], $srcSize[1]);
+
   // generating image (thumbs are always jpegs)
-  switch ($srcSize[2]) 
-    {
+  switch ($srcSize[2]) {
     case 1:
     case 2:
     case 3:
-      imageJpeg($destImage,$dest,$quality);
+      imageJpeg($destImage, $dest, $quality);
       break;
-    }
+  }
 
   return getThumbnail($thumbname);
 }
@@ -263,9 +257,10 @@ function createThumb($src,$maxWidth=100,$maxHeight=100,$quality=100) {
  * only get if the source has been modified
  * this function is from http://simon.incutio.com/archive/2003/04/23/conditionalGet
  */
-function doConditionalGet($file, $timestamp) {
+function doConditionalGet($file, $timestamp)
+{
   $last_modified = createHTTPDate($timestamp);
-  $etag = '"'.md5($file.$last_modified).'"';
+  $etag = '"' . md5($file . $last_modified) . '"';
   // Send the headers
   Header("Last-Modified: $last_modified");
   Header("ETag: $etag");
@@ -274,7 +269,7 @@ function doConditionalGet($file, $timestamp) {
     stripslashes($_SERVER['HTTP_IF_MODIFIED_SINCE']) :
     false;
   $if_none_match = isset($_SERVER['HTTP_IF_NONE_MATCH']) ?
-    stripslashes($_SERVER['HTTP_IF_NONE_MATCH']) : 
+    stripslashes($_SERVER['HTTP_IF_NONE_MATCH']) :
     false;
   if (!$if_modified_since and !$if_none_match) {
     return;
@@ -294,32 +289,34 @@ function doConditionalGet($file, $timestamp) {
 /**
  * create a HTTP conformant date
  */
-function createHTTPDate($time) {
-  return gmdate("D, d M Y H:i:s", $time)." GMT";
+function createHTTPDate($time)
+{
+  return gmdate("D, d M Y H:i:s", $time) . " GMT";
 }
 
 /**
  * Determine a files' type based on its extension.
  */
-function getFileType($filename) {
+function getFileType($filename)
+{
   global $fileTypes;
   static $extensions = null;
-  
-  if ($extensions==null) {
-    $extensions = Array();
-    foreach($fileTypes AS $keyType => $value) {
-      foreach($value AS $ext) $extensions[$ext] = $keyType;
+
+  if ($extensions == null) {
+    $extensions = array();
+    foreach ($fileTypes as $keyType => $value) {
+      foreach ($value as $ext) $extensions[$ext] = $keyType;
     }
   }
-  
+
   $pi = pathinfo($filename);
 
   // directories cause warnings, prevent it
-  if(!array_key_exists('extension', $pi)) return "unknown";
+  if (!array_key_exists('extension', $pi)) return "unknown";
 
   $extension = $pi['extension'];
   $type = @$extensions[strtolower($extension)];
-  if ($type=="") {
+  if ($type == "") {
     return "unknown";
   } else {
     return $type;
@@ -331,19 +328,18 @@ function getFileType($filename) {
  */
 function getFileSize($filename)
 {
-  if(is_dir($filename))
+  if (is_dir($filename))
     return "";
-  else if (is_file($filename))
-    {
-      $size = filesize($filename);
-      $sizes = Array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB');
-      $ext = $sizes[0];
-      for ($i=1; (($i < count($sizes)) and ($size >= 1024)); $i++) {
-	$size = $size / 1024;
-	$ext  = $sizes[$i];
-      }
-      return round($size, 2)." ".$ext;
+  else if (is_file($filename)) {
+    $size = filesize($filename);
+    $sizes = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB');
+    $ext = $sizes[0];
+    for ($i = 1; (($i < count($sizes)) and ($size >= 1024)); $i++) {
+      $size = $size / 1024;
+      $ext  = $sizes[$i];
     }
+    return round($size, 2) . " " . $ext;
+  }
 }
 
 /**
@@ -357,15 +353,17 @@ function getFileModtime($file)
 /**
  * get icon for given file type
  */
-function getIcon($fileType) {
-  return $_SERVER["PHP_SELF"]."?getimage=$fileType";
+function getIcon($fileType)
+{
+  return $_SERVER["PHP_SELF"] . "?getimage=$fileType";
 }
 
 /**
  * get thumbnail image from md5sum
  */
-function getThumbnail($md5) {
-  return $_SERVER["PHP_SELF"]."?getthumb=$md5";
+function getThumbnail($md5)
+{
+  return $_SERVER["PHP_SELF"] . "?getthumb=$md5";
 }
 
 /**
@@ -377,8 +375,8 @@ function cacheMD5($file, $md5)
 {
   global $thumbdir;
 
-  $fp = fopen($thumbdir."md5sums", 'a');
-  fwrite($fp, $md5."  ".$file."\n");
+  $fp = fopen($thumbdir . "md5sums", 'a');
+  fwrite($fp, $md5 . "  " . $file . "\n");
   fclose($fp);
 }
 
@@ -390,17 +388,16 @@ function getMD5Sums()
 {
   global $thumbdir;
 
-  $file = @file($thumbdir."md5sums");
+  $file = @file($thumbdir . "md5sums");
 
-  if(!$file) return array();
+  if (!$file) return array();
 
   $md5sums = array();
 
-  foreach($file as $line)
-    {
-      list($md5, $fname) = explode("  ", $line);
-      $md5sums[rtrim($fname)] = $md5;
-    }
+  foreach ($file as $line) {
+    list($md5, $fname) = explode("  ", $line);
+    $md5sums[rtrim($fname)] = $md5;
+  }
 
   return $md5sums;
 }
@@ -411,7 +408,7 @@ function getMD5Sums()
 function getDirArray($path)
 {
   global $retVal;
-  $handle=opendir($path);
+  $handle = opendir($path);
   while ($file = readdir($handle))
     $retVal[count($retVal)] = $file;
   closedir($handle);
@@ -425,22 +422,19 @@ function getDirArray($path)
 function filterFilelist($file)
 {
   global $ignores;
-  
-  if(function_exists('fnmatch'))
-    {
-      foreach($ignores as $pattern) {
-	if (fnmatch($pattern, $file)) return false;
-      }
+
+  if (function_exists('fnmatch')) {
+    foreach ($ignores as $pattern) {
+      if (fnmatch($pattern, $file)) return false;
+    }
+    return true;
+  } else {
+    // revert to the old method
+    if (in_array($file, $ignores))
+      return false;
+    else
       return true;
-    }
-  else
-    {
-      // revert to the old method
-      if(in_array($file, $ignores))
-	return false;
-      else
-	return true;
-    }
+  }
 }
 
 // get directory content and filter ignored files from it
@@ -452,15 +446,14 @@ natsort($dircontent);
 // get ignores for this directory
 $ignores = @file(".ignore");
 // no ignores found, just use the defaults
-if(!$ignores) 
-{
-     $ignores = array();
-}
-else
-{
+if (!$ignores) {
+  $ignores = array();
+} else {
   // trim all user defined ignores
   $tmp = array();
-  foreach($ignores as $ign){ array_push($tmp, trim($ign)); }
+  foreach ($ignores as $ign) {
+    array_push($tmp, trim($ign));
+  }
   $ignores = $tmp;
 }
 // ..and add some default ignores on top
@@ -477,243 +470,227 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n"; ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
 <head>
   <title>Index of <?php echo htmlentities(dirname($_SERVER["PHP_SELF"])); ?></title>
-<?php
-// if a specific diretory style has been specified, use it, else use the default css
-if(file_exists("./dirstyle.css"))
-{
-?>
-<link rel="stylesheet" href="dirstyle.css" />
-<?php
-} else {
-?>
-  <style type="text/css">
-body 
-{
-  background: #000000;
-  margin: 3ex;
-  color: #FFFFFF;
-  font-family: "Courier", monospace;
-}
+  <?php
+  // if a specific diretory style has been specified, use it, else use the default css
+  if (file_exists("./dirstyle.css")) {
+  ?>
+    <link rel="stylesheet" href="dirstyle.css" />
+  <?php
+  } else {
+  ?>
+    <style type="text/css">
+      body {
+        background: #000000;
+        margin: 3ex;
+        color: #FFFFFF;
+        font-family: "Courier", monospace;
+      }
 
-a:link, a:active 
-{
-  background: none;
-  color: #FFFFFF;
-  text-decoration: none;
-}
+      a:link,
+      a:active {
+        background: none;
+        color: #FFFFFF;
+        text-decoration: none;
+      }
 
-a:visited
-{
-  color: #404040;
-  background: none;
-  text-decoration: none;
-}
+      a:visited {
+        color: #404040;
+        background: none;
+        text-decoration: none;
+      }
 
-a:hover 
-{
-  background-color: #808080;
-}
+      a:hover {
+        background-color: #808080;
+      }
 
-h1
-{
-  font-size: 3ex;
-}
-		
-/* Index header */ 
-th 
-{
-  color: #FFFFFF;
-  background: #404040;
-}
+      h1 {
+        font-size: 3ex;
+      }
 
-/* hilight rows */
-tr.mouseover { background: #808080; }
-tr.mouseout { background: none; }
+      /* Index header */
+      th {
+        color: #FFFFFF;
+        background: #404040;
+      }
 
-/* copyright text at the bottom of the page */
-.copy { font-size:8pt; }
+      /* hilight rows */
+      tr.mouseover {
+        background: #808080;
+      }
 
-td.icon{}
-td.file{}
-td.thumbnail img{ border:0; }
-td.size
-{
-  text-align:right;
-  white-space:pre;
-  padding-left: 5ex;
-}
+      tr.mouseout {
+        background: none;
+      }
 
-td.date 
-{ 
-  padding-left: 5ex; 
-}
+      /* copyright text at the bottom of the page */
+      .copy {
+        font-size: 8pt;
+      }
 
-div.thumbnail
-{
- float:left;
- display:inline;
- background:#222;
- text-align:center;
- width:100px;
- height:150px;
-}
+      td.icon {}
 
-  </style>
-<?php
-}
-?>
+      td.file {}
+
+      td.thumbnail img {
+        border: 0;
+      }
+
+      td.size {
+        text-align: right;
+        white-space: pre;
+        padding-left: 5ex;
+      }
+
+      td.date {
+        padding-left: 5ex;
+      }
+
+      div.thumbnail {
+        float: left;
+        display: inline;
+        background: #222;
+        text-align: center;
+        width: 100px;
+        height: 150px;
+      }
+    </style>
+  <?php
+  }
+  ?>
 </head>
+
 <body>
-	
-<?php
-// if no header is specified, display the directory name
-if(!@include("./header.html"))
-{
-  echo "<h1>Index of ".htmlentities(dirname($_SERVER["PHP_SELF"]))."</h1>\n";
-}
 
-// Mode selection	
-switch($mode)
-{
- default:
- case 'normal':
-   // table headers
-   echo '<table cellspacing="0"><tr><th colspan="2">File</th>';
-   if($show_filesize)
-     echo "<th>Size</th>";
-   if($show_lastmod)
-     echo "<th>Date</th>";
-   echo "</tr>\n";
+  <?php
+  // if no header is specified, display the directory name
+  if (!@include("./header.html")) {
+    echo "<h1>Index of " . htmlentities(dirname($_SERVER["PHP_SELF"])) . "</h1>\n";
+  }
 
-   foreach($dircontent as $file)
-     {
-       echo '<tr class="fileitem" onmouseover="this.className=\'mouseover\'" onmouseout="this.className=\'mouseout\'">';
-       // directories
-       if(is_dir($file) and $show_dirs)
-	 {	
-	   echo '<td><img src="'.getIcon('folder').'" alt="[DIR]" /></td><td class="icon"><a href="'.$file.'/">'.$file.'</a></td>';
-	 }
-       // files
-       else if (is_file($file) and $show_files)
-	 {
-	   $type = getFileType($file);
-	   if($type == 'image' and $doThumbs)
-	     {
-	       echo '<td class="thumbnail"><a href="'.$file.'"><img src="'.createThumb($file).'" style="width:20px;height:20px;" alt="[THUMB]" /></a></td>';
-	     }
-	   else
-	     {
-	       echo '<td><img src="'.getIcon($type).'" alt="[FILE]" /></td>';
-	    }
-	   echo '<td class="file"><a href="'.$file.'">'.$file.'</a></td>';
-	 }
-       
-       // both
-       if(is_file($file) or is_dir($file))
-	 {
-	   if($show_filesize)
-	     echo '<td class="size">'.getFileSize($file)."</td>";
-	   if($show_lastmod)
-	     echo '<td class="date">'.getFileModTime($file).'</td>';
-	 }	
-       
-       echo "</tr>\n";
-     }
+  // Mode selection	
+  switch ($mode) {
+    default:
+    case 'normal':
+      // table headers
+      echo '<table cellspacing="0"><tr><th colspan="2">File</th>';
+      if ($show_filesize)
+        echo "<th>Size</th>";
+      if ($show_lastmod)
+        echo "<th>Date</th>";
+      echo "</tr>\n";
 
-   echo '</table>';
-   break;
+      foreach ($dircontent as $file) {
+        echo '<tr class="fileitem" onmouseover="this.className=\'mouseover\'" onmouseout="this.className=\'mouseout\'">';
+        // directories
+        if (is_dir($file) and $show_dirs) {
+          echo '<td><img src="' . getIcon('folder') . '" alt="[DIR]" /></td><td class="icon"><a href="' . $file . '/">' . $file . '</a></td>';
+        }
+        // files
+        else if (is_file($file) and $show_files) {
+          $type = getFileType($file);
+          if ($type == 'image' and $doThumbs) {
+            echo '<td class="thumbnail"><a href="' . $file . '"><img src="' . createThumb($file) . '" style="width:20px;height:20px;" alt="[THUMB]" /></a></td>';
+          } else {
+            echo '<td><img src="' . getIcon($type) . '" alt="[FILE]" /></td>';
+          }
+          echo '<td class="file"><a href="' . $file . '">' . $file . '</a></td>';
+        }
+
+        // both
+        if (is_file($file) or is_dir($file)) {
+          if ($show_filesize)
+            echo '<td class="size">' . getFileSize($file) . "</td>";
+          if ($show_lastmod)
+            echo '<td class="date">' . getFileModTime($file) . '</td>';
+        }
+
+        echo "</tr>\n";
+      }
+
+      echo '</table>';
+      break;
 
 
- case 'thumbnails':
+    case 'thumbnails':
 
-   echo "<table>\n";
-   echo "<tr>\n";
+      echo "<table>\n";
+      echo "<tr>\n";
 
-   $colCount = 0;
-   foreach($dircontent as $file)
-     {
-       if(is_dir($file))
-	 {
-	   echo '<td style="background:#222;text-align:center;">';
-	   if($file == "..")
-	     echo '<a href="'.$file.'/"><img src="'.getIcon('bigfolder').'" alt="" style="color:white;background:none;font-size:12px;"/><br/>Up one level</a>';
-	   else
-	     echo '<a href="'.$file.'/"><img src="'.getIcon('bigfolder').'" alt="" /><br/>'.$file.'</a>';
-	   echo "</td>\n";
-	 }
-       else
-	 {
-	   $type = getFileType($file);
-	   switch($type)
-	     {
-	     case 'image':
-	       echo '<td style="background:#222;text-align:center;"><a href="'.$file.'" style="border:0;font-size:12px;"><img src="'.createThumb($file).'" alt="[Thumb]" /><br/>';
-	       echo $file;
-	       echo "</a></td>\n";
-	       break;
-	     default:
-	       // a non-image, subtract one from column index
-	       // to prevent it from getting fux0red
-	       $colCount--;
-	       break;
-	     }
-	 }
-       $colCount++;
-       if($colCount >= 5) 
-	 {
-	   echo "</tr>\n<tr>\n";
-	   $colCount = 0;
-	 }
-    }
-   
-   echo "</tr>\n";
-   echo "</table>\n";
-   break;
- case 'thumbnails2':
+      $colCount = 0;
+      foreach ($dircontent as $file) {
+        if (is_dir($file)) {
+          echo '<td style="background:#222;text-align:center;">';
+          if ($file == "..")
+            echo '<a href="' . $file . '/"><img src="' . getIcon('bigfolder') . '" alt="" style="color:white;background:none;font-size:12px;"/><br/>Up one level</a>';
+          else
+            echo '<a href="' . $file . '/"><img src="' . getIcon('bigfolder') . '" alt="" /><br/>' . $file . '</a>';
+          echo "</td>\n";
+        } else {
+          $type = getFileType($file);
+          switch ($type) {
+            case 'image':
+              echo '<td style="background:#222;text-align:center;"><a href="' . $file . '" style="border:0;font-size:12px;"><img src="' . createThumb($file) . '" alt="[Thumb]" /><br/>';
+              echo $file;
+              echo "</a></td>\n";
+              break;
+            default:
+              // a non-image, subtract one from column index
+              // to prevent it from getting fux0red
+              $colCount--;
+              break;
+          }
+        }
+        $colCount++;
+        if ($colCount >= 5) {
+          echo "</tr>\n<tr>\n";
+          $colCount = 0;
+        }
+      }
 
-   foreach($dircontent as $file)
-     {
-       if(is_dir($file))
-	 {
-	   echo '<div class="thumbnail">';
-	   if($file == "..")
-	     echo '<a href="'.$file.'/"><img src="'.getIcon('bigfolder').'" alt="" style="color:white;background:none;font-size:12px;"/><br/>Up one level</a>';
-	   else
-	     echo '<a href="'.$file.'/"><img src="'.getIcon('bigfolder').'" alt="" /><br/>'.$file.'</a>';
-	   echo "</div>\n";
-	 }
-       else
-	 {
-	   $type = getFileType($file);
-	   switch($type)
-	     {
-	     case 'image':
-	       echo '<div class="thumbnail"><a href="'.$file.'" style="border:0;font-size:12px;"><img src="'.createThumb($file).'" alt="[Thumb]" /><br/>';
-	       echo $file;
-	       echo "</a></div>\n";
-	       break;
-	     default:
-	       break;
-	     }
-	 }
-    }
-   break;
-}
+      echo "</tr>\n";
+      echo "</table>\n";
+      break;
+    case 'thumbnails2':
 
-?>
-		
-<?php 
-@include("./footer.html"); 
-?>
+      foreach ($dircontent as $file) {
+        if (is_dir($file)) {
+          echo '<div class="thumbnail">';
+          if ($file == "..")
+            echo '<a href="' . $file . '/"><img src="' . getIcon('bigfolder') . '" alt="" style="color:white;background:none;font-size:12px;"/><br/>Up one level</a>';
+          else
+            echo '<a href="' . $file . '/"><img src="' . getIcon('bigfolder') . '" alt="" /><br/>' . $file . '</a>';
+          echo "</div>\n";
+        } else {
+          $type = getFileType($file);
+          switch ($type) {
+            case 'image':
+              echo '<div class="thumbnail"><a href="' . $file . '" style="border:0;font-size:12px;"><img src="' . createThumb($file) . '" alt="[Thumb]" /><br/>';
+              echo $file;
+              echo "</a></div>\n";
+              break;
+            default:
+              break;
+          }
+        }
+      }
+      break;
+  }
 
-<p class="copy"><a href="http://tefra.fi/software/php/">PHP Indexer <?php echo $verno; ?></a> by <a href="mailto:shrike@addiktit.net">Shrike</a></p>
-<p style="font-size:8pt;">[ <a href="http://validator.w3.org/check/referer" title="Validate this page's XHTML syntax">Valid XHTML 1.1</a> | <a href="http://jigsaw.w3.org/css-validator/check/referer" title="Validate this page's CSS">Valid CSS</a> ]</p>
+  ?>
 
-<?php 
-@include("./bottomfooter.html"); 
-?>
+  <?php
+  @include("./footer.html");
+  ?>
+
+  <p class="copy"><a href="http://tefra.fi/software/php/">PHP Indexer <?php echo $verno; ?></a> by <a href="mailto:shrike@addiktit.net">Shrike</a></p>
+
+  <?php
+  @include("./bottomfooter.html");
+  ?>
 
 </body>
+
 </html>
