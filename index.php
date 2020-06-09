@@ -110,7 +110,7 @@ static $imagesEncoded = array(
 // ...Configuration
 //--------------------------------------------------
 
-$verno = "2.2";
+$verno = "2.3";
 
 // Real men's scripts don't give any warnings, so it's safe to do this =)
 
@@ -407,13 +407,13 @@ function getMD5Sums()
  */
 function getDirArray($path)
 {
-  global $retVal;
+  $fileNames = array();
   $handle = opendir($path);
-  while ($file = readdir($handle))
-    $retVal[count($retVal)] = $file;
+  while (false !== ($file = readdir($handle)))
+    $fileNames[] = $file;
   closedir($handle);
 
-  return $retVal;
+  return $fileNames;
 }
 
 /**
@@ -466,18 +466,18 @@ array_push($ignores, "*~");         // backup files
 $dircontent = array_filter($dircontent, "filterFilelist");
 
 // -- start (X)HTML --
-echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n"; ?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+?>
+<!DOCTYPE html>
+<html>
 
 <head>
+  <meta charset="UTF-8" />
   <title>Index of <?php echo htmlentities(dirname($_SERVER["PHP_SELF"])); ?></title>
   <?php
   // if a specific diretory style has been specified, use it, else use the default css
   if (file_exists("./dirstyle.css")) {
   ?>
-    <link rel="stylesheet" href="dirstyle.css" />
+    <link rel="stylesheet" href="dirstyle.css">
   <?php
   } else {
   ?>
@@ -490,17 +490,20 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n"; ?>
       }
 
       a:link,
-      a:active {
+      a:active,
+      a:visited {
         background: none;
         color: #FFFFFF;
         text-decoration: none;
       }
 
+      /*
       a:visited {
         color: #404040;
         background: none;
         text-decoration: none;
       }
+*/
 
       a:hover {
         background-color: #808080;
